@@ -66,8 +66,8 @@ This package includes the following types of assertions:
 
 ## Supported warehouses
 
-This package has been tested with BigQuery. It has not been tested with other warehouses.
+This package has been tested with BigQuery. It has not been tested with other warehouses, but it should work with any warehouse supported by Dataform.
 
-# License
+## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
