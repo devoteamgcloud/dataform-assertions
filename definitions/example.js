@@ -16,7 +16,7 @@ const commonAssertionsResult = commonAssertions({
       "id_strict_positive": "id > 0"
     },
     "second_table": {
-      "id_not_null": "id IS NOT NULL"
+      "id_in_accepted_values": "id IN (1, 2, 3)"
     }
   },
   uniqueKeyConditions: {
