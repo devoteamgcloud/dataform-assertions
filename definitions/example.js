@@ -7,7 +7,7 @@ const commonAssertionsResult = commonAssertions({
     "location": "EU",
     "tags": ["assertions"],
     // Sometimes data quality is not good in some environments,
-    // so we can disable the assertions in those environments.
+    // so assertions can be disabled in those environments.
     // "disabledInEnvs": ["dv", "qa"]
   },
   rowConditions: {
@@ -21,7 +21,7 @@ const commonAssertionsResult = commonAssertions({
   },
   uniqueKeyConditions: {
     "first_table": ["id"],
-    "second_table": ["id"]
+    "second_table": ["id", "updated_date"]
   },
   dataFreshnessConditions: {
     "first_table": {
