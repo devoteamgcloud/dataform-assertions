@@ -15,4 +15,3 @@ repos:
   rev: v1.0.2
   hooks:
     - id: dataform_format
-    
