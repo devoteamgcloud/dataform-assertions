@@ -45,8 +45,8 @@ const commonAssertionsResult = commonAssertions({
     "disabledInEnvs": ["your-disabled-environments"]
   },
   rowConditions: {
-    "your-table": {
-      "your-condition": "your-SQL-condition"
+    "your_table": {
+      "your_condition": "your-SQL-condition"
     }
   }
 });
