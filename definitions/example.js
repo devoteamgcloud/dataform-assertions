@@ -7,7 +7,7 @@ const commonAssertionsResult = commonAssertions({
     "location": "EU",
     "tags": ["assertions"],
     // Sometimes data quality is not good in some environments,
-    // so assertions can be disabled in those environments.
+    // assertions can be disabled in those environments.
     // "disabledInEnvs": ["dv", "qa"]
   },
   rowConditions: {
