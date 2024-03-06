@@ -1,5 +1,7 @@
 # Dataform Assertions
 
+![Publish package](https://github.com/github/docs/actions/workflows/publish-package.yml/badge.svg)
+
 This Dataform package provides a set of assertions for testing the data in your warehouse. It includes assertions for data freshness, unique keys, row conditions, and data completeness.
 
 Contributions are welcome! If you have an idea for a new assertion, please open an issue or submit a pull request.
