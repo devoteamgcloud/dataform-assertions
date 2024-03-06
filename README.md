@@ -1,9 +1,9 @@
 # Dataform Assertions
 
-![dataform-logo](https://lh3.googleusercontent.com/0XJTy4eSGuID_GR3-MqWZDEEyGJUuwguO0HJdFZZDXmeAbL0CVZh7rOmVsVdFFdAvOiTCioXUult1f06TGWyhg | width=100)
+<p align="center">
+<img src="https://github.com/devoteamgcloud/dataform-assertions/actions/workflows/publish-package.yaml/badge.svg">
 
-![Publish package status](https://github.com/devoteamgcloud/dataform-assertions/actions/workflows/publish-package.yaml//badge.svg)
-
+</p>
 
 
 Unlock advanced data testing capabilities with this Dataform package, offering a comprehensive and common suite of assertions designed for testing various facets of your warehouse data, including data freshness, unique keys, row conditions, and data completeness. 
