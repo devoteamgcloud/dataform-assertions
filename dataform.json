@@ -1,0 +1,10 @@
+{
+    "warehouse": "bigquery",
+    "defaultSchema": "dataform",
+    "assertionSchema": "dataform_assertions",
+    "defaultDatabase": "sandbox-hrialan",
+    "defaultLocation": "EU",
+    "vars":{
+        "env":"dv"
+    }
+}
