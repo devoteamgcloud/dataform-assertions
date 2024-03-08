@@ -44,6 +44,19 @@ const commonAssertionsResult = commonAssertions({
     "second_table": {
       "id": 30
     }
+  },
+  "referentialIntegrityConditions": {
+    "first_table": [{
+        "parent_key": "id",
+        "child_table": "second_table",
+        "child_key": "parent_id"
+      },
+      {
+        "parent_key": "another_id",
+        "child_table": "third_table",
+        "child_key": "another_parent_id"
+      }
+    ]
   }
 });
 

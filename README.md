@@ -1,6 +1,6 @@
 # Dataform Assertions
 
-Unlock advanced data testing capabilities with this Dataform package, offering a comprehensive and common suite of assertions designed for testing various facets of your warehouse data, including data freshness, unique keys, row conditions, and data completeness.
+Unlock advanced data testing capabilities with this Dataform package, offering a comprehensive and common suite of assertions designed for testing various facets of your warehouse data, including data freshness, unique keys, row conditions, data completeness and referential integrity.
 
 Your contributions are highly encouraged – whether you have an innovative assertion idea or wish to enhance the existing ones, feel free to open an issue or submit a pull request to enrich the Dataform community.
 
@@ -72,6 +72,7 @@ This package includes the following types of assertions:
 - **Unique key conditions**: Check if a given primary key (can be a set of columns) is not duplicated in a table.
 - **Data freshness conditions**: Check if the data in a table is fresh enough given some conditions.
 - **Data completeness conditions**: Check if the data in a column have less than a given percentage of null values.
+- **Referential integrity conditions**: Check if foreign key relationships are maintained between tables.
 
 ## Warning
 
