@@ -17,14 +17,14 @@
  *   @property {Object} uniqueKeyConditions - An object mapping table names to unique key conditions. Format: { tableName: [column1, column2, ...], ... }
  *   @property {Object} dataFreshnessConditions - An object mapping table names to data freshness conditions. Format: { tableName: { delayCondition, timeUnit, dateColumn }, ... }
  *   @property {Object} dataCompletenessConditions - An object mapping table names to data completeness conditions. Format: { tableName: { columnName: allowedPercentageNull, ... }, ... }
- *   @property {Object} referentialIntegrityConditions - An object mapping parent table names to referential integrity conditions.
+ *   @property {Object} referentialIntegrityConditions - An object mapping parent table names to referential integrity conditions. Format: { parentTable: [{ parentKey, childTable, childKey }, ...], ... }
  */
 
 const row_condition_assertions = require("./includes/row_condition_assertions");
 const unique_key_assertions = require("./includes/unique_key_assertions");
 const data_freshness_assertions = require("./includes/data_freshness_assertions");
 const data_completeness_assertions = require("./includes/data_completeness_assertions");
-const referential_integrity_assertions = require("./includes/referential_integrity_assertions"); // New import
+const referential_integrity_assertions = require("./includes/referential_integrity_assertions");
 
 module.exports = ({
     globalAssertionsParams = {
@@ -38,7 +38,7 @@ module.exports = ({
     uniqueKeyConditions = {},
     dataFreshnessConditions = {},
     dataCompletenessConditions = {},
-    referentialIntegrityConditions = {} // New parameter
+    referentialIntegrityConditions = {}
 }) => {
     const rowConditionAssertionsResult = row_condition_assertions(globalAssertionsParams, rowConditions);
     const uniqueKeyAssertionsResult = unique_key_assertions(globalAssertionsParams, uniqueKeyConditions);
@@ -51,6 +51,6 @@ module.exports = ({
         uniqueKeyAssertions: uniqueKeyAssertionsResult,
         dataFreshnessAssertions: dataFreshnessAssertionsResult,
         dataCompletenessAssertions: dataCompletenessAssertionsResult,
-        referentialIntegrityAssertions: referentialIntegrityAssertionsResult // New assertion
+        referentialIntegrityAssertions: referentialIntegrityAssertionsResult
     };
 }
