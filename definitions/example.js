@@ -8,6 +8,7 @@ const commonAssertionsResult = commonAssertions({
     "tags": ["assertions"],
     // Sometimes data quality is not good in some environments,
     // assertions can be disabled in those environments.
+    // Set the 'dataform.projectConfig.vars.env' var in 'dataform.json' for this to work.
     // "disabledInEnvs": ["dv", "qa"]
   },
   rowConditions: {
@@ -44,6 +45,19 @@ const commonAssertionsResult = commonAssertions({
     "second_table": {
       "id": 30
     }
+  },
+  referentialIntegrityConditions: {
+    "first_table": [{
+        "parentKey": "id",
+        "childTable": "second_table",
+        "childKey": "id"
+      },
+      {
+        "parentKey": "id",
+        "childTable": "third_table",
+        "childKey": "parent_id"
+      }
+    ]
   }
 });
 
