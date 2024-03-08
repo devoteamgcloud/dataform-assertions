@@ -55,7 +55,7 @@ const commonAssertionsResult = commonAssertions({
  * |----------------|----------------|
  * | id_not_null    | row_condition  |
  * |       ...      |       ...      |
- * 
+ *
  * It is here as an example on how you can re use the created assertions for audit or for any other purpose.
  */
 
