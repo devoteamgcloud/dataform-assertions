@@ -49,12 +49,12 @@ const commonAssertionsResult = commonAssertions({
     "first_table": [{
         "parentKey": "id",
         "childTable": "second_table",
-        "childKey": "parent_id"
+        "childKey": "id"
       },
       {
-        "parentKey": "another_id",
+        "parentKey": "id",
         "childTable": "third_table",
-        "child_key": "another_parent_id"
+        "childKey": "parent_id"
       }
     ]
   }
