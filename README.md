@@ -75,9 +75,9 @@ This package includes the following types of assertions:
 
 ## Warning
 
-Dataform assertions are SQL-based, and they are executed in the warehouse. This means that they can be expensive to run, especially if you have a large amount of data.
+Dataform assertions are SQL-based and executed in the data warehouse. This means that they can be resource-intensive, especially when dealing with a large volume of data.
 
-In the Dataform UI you have the possibility to check full assertions queries and bytes processed before running them. Depending on the size of the tables in your warehouse, you may want to run these assertions less frequently than other Dataform actions, or limit the number of assertions.
+In the Dataform UI, you have the option to review complete assertion queries and the amount of data processed before running them. Depending on the size of the tables in your data warehouse, you might consider running these assertions less frequently compared to other Dataform actions or limiting the number of assertions.
 
 ## Supported warehouses
 
