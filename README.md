@@ -11,10 +11,20 @@ Your contributions are highly encouraged – whether you have an innovative asse
 
 ## Contents
 
+- [Context](#context)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Available assertions](#available-assertions)
+- [Warning](#warning)
+- [Supported warehouses](#supported-warehouses)
+- [Contributing](#contributing)
 - [License](#license)
+
+## Context
+
+Data testing is a crucial part of the data engineering process, ensuring that the data is accurate, reliable, and consistent. Dataform provides a powerful framework for data testing, allowing you to write SQL-based assertions to validate your data. However, writing these assertions can be time-consuming and error-prone, especially when you need to test the same conditions across multiple tables.
+
+This package aims to provide a common suite of assertions that can be easily reused across multiple projects, saving you time and effort. It includes a variety of assertions to test different facets of your data.
 
 ## Installation
 
@@ -51,7 +61,7 @@ const commonAssertionsResult = commonAssertions({
 });
 ```
 
-You can find a more complete example in [`definitions/example.js`](./definitions/example.js).
+You can find a more complete example here: [definitions/example.js](./definitions/example.js).
 
 
 ## Available assertions
@@ -63,9 +73,19 @@ This package includes the following types of assertions:
 - **Data freshness conditions**: Check if the data in a table is fresh enough given some conditions.
 - **Data completeness conditions**: Check if the data in a column have less than a given percentage of null values.
 
+## Warning
+
+Dataform assertions are SQL-based, and they are executed in the warehouse. This means that they can be expensive to run, especially if you have a large amount of data.
+
+In the Dataform UI you have the possibility to check full assertions queries and bytes processed before running them. Depending on the size of the tables in your warehouse, you may want to run these assertions less frequently than other Dataform actions, or limit the number of assertions.
+
 ## Supported warehouses
 
 This package has been tested with BigQuery. It has not been tested with other warehouses, but it should work with any warehouse supported by Dataform.
+
+## Contributing
+
+We welcome contributions to the Dataform Assertions package. If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
 
 ## License
 
