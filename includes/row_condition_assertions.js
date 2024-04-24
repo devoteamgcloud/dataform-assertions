@@ -11,6 +11,7 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for row conditions.
  * @param {string} conditionName - The name of the condition to check.
  * @param {string} conditionQuery - The SQL query that defines the condition to check.
@@ -18,14 +19,14 @@
 
 const assertions = [];
 
-const createRowConditionAssertion = (globalParams, tableName, conditionName, conditionQuery) => {
-  const assertion = assert(`assert_${conditionName.replace(/-/g , "_")}_${tableName}`)
+const createRowConditionAssertion = (globalParams, schemaName, tableName, conditionName, conditionQuery) => {
+  const assertion = assert(`assert_${conditionName.replace(/-/g , "_")}${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
-    .description(`Assert that rows in ${tableName} meet ${conditionName}`)
+    .description(`Assert that rows in ${schemaName}.${tableName} meet ${conditionName}`)
     .tags("assert-row-condition")
-    .query(ctx => `SELECT "Condition not met: ${conditionQuery}, Table: ${ctx.ref(tableName)}" AS assertion_description
-                       FROM ${ctx.ref(tableName)}
+    .query(ctx => `SELECT "Condition not met: ${conditionQuery}, Table: ${ctx.ref(schemaName, tableName)}" AS assertion_description
+                       FROM ${ctx.ref(schemaName, tableName)}
                        WHERE NOT (${conditionQuery})`);
 
   (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
@@ -38,12 +39,14 @@ const createRowConditionAssertion = (globalParams, tableName, conditionName, con
 module.exports = (globalParams, rowConditions) => {
 
   // Loop through rowConditions to create assertions.
-  for (let tableName in rowConditions) {
-    for (let conditionName in rowConditions[tableName]) {
-      const conditionQuery = rowConditions[tableName][conditionName];
-      createRowConditionAssertion(globalParams, tableName, conditionName, conditionQuery);
+  for (let schemaName in rowConditions) {
+    const tableNames = rowConditions[schemaName];
+    for (let tableName in tableNames) {
+      for (let conditionName in tableNames[tableName]) {
+        const conditionQuery = tableNames[tableName][conditionName];
+        createRowConditionAssertion(globalParams, schemaName, tableName, conditionName, conditionQuery);
+      }
     }
   }
-
   return assertions;
 }
