@@ -21,6 +21,7 @@ const commonAssertionsResult = commonAssertions({
       "second_table": {
         "id_in_accepted_values": "id IN (1, 2, 3)"
       }
+    }
   },
   uniqueKeyConditions: {
     "first_table": ["id"],
