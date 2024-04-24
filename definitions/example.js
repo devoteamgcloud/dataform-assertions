@@ -25,15 +25,18 @@ const commonAssertionsResult = commonAssertions({
     "second_table": ["id", "updated_date"]
   },
   dataFreshnessConditions: {
-    "first_table": {
-      "dateColumn": "updated_date",
-      "timeUnit": "DAY",
-      "delayCondition": 1,
-    },
-    "second_table": {
-      "dateColumn": "updated_date",
-      "timeUnit": "MONTH",
-      "delayCondition": 3,
+    // Format: "schema": { "table": { "dateColumn", "timeUnit", "delayCondition" }, ... }
+    "dataform" : {
+      "first_table": {
+        "dateColumn": "updated_date",
+        "timeUnit": "DAY",
+        "delayCondition": 1,
+      },
+      "second_table": {
+        "dateColumn": "updated_date",
+        "timeUnit": "MONTH",
+        "delayCondition": 3,
+      }
     }
   },
   dataCompletenessConditions: {
