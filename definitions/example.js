@@ -24,8 +24,11 @@ const commonAssertionsResult = commonAssertions({
     }
   },
   uniqueKeyConditions: {
-    "first_table": ["id"],
-    "second_table": ["id", "updated_date"]
+    // Format: "schema": { "table": [column1, column2, ...], ... }
+    "dataform": {
+      "first_table": ["id"],
+      "second_table": ["id", "updated_date"]
+    }
   },
   dataFreshnessConditions: {
     // Format: "schema": { "table": { "dateColumn", "timeUnit", "delayCondition" }, ... }

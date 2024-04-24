@@ -11,22 +11,23 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for unique keys.
  * @param {Array} columns - An array of column names that should form a unique key.
  */
 
 const assertions = [];
 
-const createUniqueKeyAssertion = (globalParams, tableName, columns) => {
+const createUniqueKeyAssertion = (globalParams, schemaName, tableName, columns) => {
   const uniqueColumns = columns.join(', ');
 
-  const assertion = assert(`assert_unique_key_${tableName}`)
+  const assertion = assert(`assert_unique_key_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
-    .description(`Check that values in columns (${uniqueColumns}) in ${tableName} form a unique key`)
+    .description(`Check that values in columns (${uniqueColumns}) in ${schemaName}.${tableName} form a unique key`)
     .tags("assert-unique-key")
     .query(ctx => `SELECT ${uniqueColumns}
-                       FROM ${ctx.ref(tableName)}
+                       FROM ${ctx.ref(schemaName, tableName)}
                        GROUP BY ${uniqueColumns}
                        HAVING COUNT(*) > 1`);
 
@@ -40,9 +41,12 @@ const createUniqueKeyAssertion = (globalParams, tableName, columns) => {
 module.exports = (globalParams, uniqueKeyConditions) => {
 
   // Loop through uniqueKeyConditions to create unique key check assertions.
-  for (let tableName in uniqueKeyConditions) {
-    const columns = uniqueKeyConditions[tableName];
-    createUniqueKeyAssertion(globalParams, tableName, columns);
+  for (let schemaName in uniqueKeyConditions) {
+    const tableNames = uniqueKeyConditions[schemaName];
+    for (let tableName in tableNames) {
+      const columns = tableNames[tableName];
+      createUniqueKeyAssertion(globalParams, schemaName, tableName, columns);
+    }
   }
 
   return assertions;
