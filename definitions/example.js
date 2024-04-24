@@ -59,17 +59,22 @@ const commonAssertionsResult = commonAssertions({
     }
   },
   referentialIntegrityConditions: {
-    "first_table": [{
-        "parentKey": "id",
-        "childTable": "second_table",
-        "childKey": "id"
-      },
-      {
-        "parentKey": "id",
-        "childTable": "third_table",
-        "childKey": "parent_id"
-      }
-    ]
+    // Format: "parentSchema": { "parentTable": [{ parentKey, childSchema, childTable, childKey }, ...], ... }
+    "dataform": {
+      "first_table": [{
+          "parentKey": "id",
+          "childSchema": "dataform",
+          "childTable": "second_table",
+          "childKey": "id"
+        },
+        {
+          "parentKey": "id",
+          "childSchema": "dataform",
+          "childTable": "third_table",
+          "childKey": "parent_id"
+        }
+      ]
+    }
   }
 });
 

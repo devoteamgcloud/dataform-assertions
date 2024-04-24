@@ -19,17 +19,17 @@
 
 const assertions = [];
 
-const createReferentialIntegrityAssertion = (globalParams, parentTable, parentKey, childTable, childKey) => {
+const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentTable, parentKey, childSchema, childTable, childKey) => {
 
-  const assertion = assert(`assert_referential_integrity_${parentTable}_${childTable}`)
+  const assertion = assert(`assert_referential_integrity_${parentSchema}_${parentTable}_${childSchema}_${childTable}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
     .description(`Check referential integrity for ${childTable}.${childKey} referencing ${parentTable}.${parentKey}`)
     .tags("assert-referential-integrity")
     .query(ctx => `
           SELECT pt.${parentKey}
-          FROM ${ctx.ref(parentTable)} AS pt
-          LEFT JOIN ${ctx.ref(childTable)} AS t ON t.${childKey} = pt.${parentKey}
+          FROM ${ctx.ref(parentSchema, parentTable)} AS pt
+          LEFT JOIN ${ctx.ref(childSchema, childTable)} AS t ON t.${childKey} = pt.${parentKey}
           WHERE t.${childKey} IS NULL
         `);
 
@@ -41,16 +41,28 @@ const createReferentialIntegrityAssertion = (globalParams, parentTable, parentKe
 };
 
 module.exports = (globalParams, referentialIntegrityConditions) => {
-  for (let parentTable in referentialIntegrityConditions) {
-    const relationships = referentialIntegrityConditions[parentTable];
+  for (let parentSchema in referentialIntegrityConditions) {
+    const parentTables = referentialIntegrityConditions[parentSchema];
+    for (let parentTable in parentTables) {
+      const relationships = parentTables[parentTable];
 
-    relationships.forEach(({
-      parentKey,
-      childTable,
-      childKey
-    }) => {
-      createReferentialIntegrityAssertion(globalParams, parentTable, parentKey, childTable, childKey);
-    })
-  }
+      relationships.forEach(({
+        parentKey,
+        childSchema,
+        childTable,
+        childKey
+      }) => {
+        createReferentialIntegrityAssertion(
+          globalParams,
+          parentSchema,
+          parentTable,
+          parentKey,
+          childSchema,
+          childTable,
+          childKey
+        );
+      })
+    }
+  };
   return assertions;
 };
