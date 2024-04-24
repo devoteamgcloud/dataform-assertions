@@ -44,7 +44,13 @@ module.exports = (globalParams, rowConditions) => {
     for (let tableName in tableNames) {
       for (let conditionName in tableNames[tableName]) {
         const conditionQuery = tableNames[tableName][conditionName];
-        createRowConditionAssertion(globalParams, schemaName, tableName, conditionName, conditionQuery);
+        createRowConditionAssertion(
+          globalParams,
+          schemaName,
+          tableName,
+          conditionName,
+          conditionQuery
+        );
       }
     }
   }

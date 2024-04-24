@@ -32,7 +32,7 @@ const commonAssertionsResult = commonAssertions({
   },
   dataFreshnessConditions: {
     // Format: "schema": { "table": { "dateColumn", "timeUnit", "delayCondition" }, ... }
-    "dataform" : {
+    "dataform": {
       "first_table": {
         "dateColumn": "updated_date",
         "timeUnit": "DAY",
