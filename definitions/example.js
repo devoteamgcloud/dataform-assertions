@@ -12,52 +12,69 @@ const commonAssertionsResult = commonAssertions({
     // "disabledInEnvs": ["dv", "qa"]
   },
   rowConditions: {
-    "first_table": {
-      "id_not_null": "id IS NOT NULL",
-      "id_strict_positive": "id > 0"
-    },
-    "second_table": {
-      "id_in_accepted_values": "id IN (1, 2, 3)"
+    // Format: "schema": { "table": { "conditionName": "conditionQuery", ... }, ... }
+    "dataform": {
+      "first_table": {
+        "id_not_null": "id IS NOT NULL",
+        "id_strict_positive": "id > 0"
+      },
+      "second_table": {
+        "id_in_accepted_values": "id IN (1, 2, 3)"
+      }
     }
   },
   uniqueKeyConditions: {
-    "first_table": ["id"],
-    "second_table": ["id", "updated_date"]
+    // Format: "schema": { "table": [column1, column2, ...], ... }
+    "dataform": {
+      "first_table": ["id"],
+      "second_table": ["id", "updated_date"]
+    }
   },
   dataFreshnessConditions: {
-    "first_table": {
-      "dateColumn": "updated_date",
-      "timeUnit": "DAY",
-      "delayCondition": 1,
-    },
-    "second_table": {
-      "dateColumn": "updated_date",
-      "timeUnit": "MONTH",
-      "delayCondition": 3,
+    // Format: "schema": { "table": { "dateColumn", "timeUnit", "delayCondition" }, ... }
+    "dataform": {
+      "first_table": {
+        "dateColumn": "updated_date",
+        "timeUnit": "DAY",
+        "delayCondition": 1,
+      },
+      "second_table": {
+        "dateColumn": "updated_date",
+        "timeUnit": "MONTH",
+        "delayCondition": 3,
+      }
     }
   },
   dataCompletenessConditions: {
-    "first_table": {
-      // Format: "column": allowedPercentageNull
-      "updated_date": 1, // 1% of null values allowed in the updated_date column
-      "id": 20
-    },
-    "second_table": {
-      "id": 30
+    // Format: "schema": { "table": { "column": allowedPercentageNull, ... }, ... }
+    "dataform": {
+      "first_table": {
+        // Format: "column": allowedPercentageNull
+        "updated_date": 1, // 1% of null values allowed in the updated_date column
+        "id": 20
+      },
+      "second_table": {
+        "id": 30
+      }
     }
   },
   referentialIntegrityConditions: {
-    "first_table": [{
-        "parentKey": "id",
-        "childTable": "second_table",
-        "childKey": "id"
-      },
-      {
-        "parentKey": "id",
-        "childTable": "third_table",
-        "childKey": "parent_id"
-      }
-    ]
+    // Format: "parentSchema": { "parentTable": [{ parentKey, childSchema, childTable, childKey }, ...], ... }
+    "dataform": {
+      "first_table": [{
+          "parentKey": "id",
+          "childSchema": "dataform",
+          "childTable": "second_table",
+          "childKey": "id"
+        },
+        {
+          "parentKey": "id",
+          "childSchema": "dataform",
+          "childTable": "third_table",
+          "childKey": "parent_id"
+        }
+      ]
+    }
   }
 });
 
