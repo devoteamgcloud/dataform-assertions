@@ -37,13 +37,16 @@ const commonAssertionsResult = commonAssertions({
     }
   },
   dataCompletenessConditions: {
-    "first_table": {
-      // Format: "column": allowedPercentageNull
-      "updated_date": 1, // 1% of null values allowed in the updated_date column
-      "id": 20
-    },
-    "second_table": {
-      "id": 30
+    // Format: "schema": { "table": { "column": allowedPercentageNull, ... }, ... }
+    "dataform": {
+      "first_table": {
+        // Format: "column": allowedPercentageNull
+        "updated_date": 1, // 1% of null values allowed in the updated_date column
+        "id": 20
+      },
+      "second_table": {
+        "id": 30
+      }
     }
   },
   referentialIntegrityConditions: {
