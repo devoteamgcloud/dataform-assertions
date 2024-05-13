@@ -17,7 +17,7 @@
 
 const assertions = [];
 
-const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, timeUnit, dateColumn) => {
+const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
   const assertion = assert(`assert_freshness_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
@@ -27,7 +27,7 @@ const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, t
                 WITH
                     freshness AS (
                         SELECT
-                            DATE_DIFF(CURRENT_DATE(), MAX(${dateColumn}), ${timeUnit}) AS delay
+                            DATE_DIFF(CURRENT_DATE("${timeZone}"), MAX(${dateColumn}), ${timeUnit}) AS delay
                         FROM
                             ${ctx.ref(tableName)}
                     )
@@ -53,9 +53,10 @@ module.exports = (globalParams, freshnessConditions) => {
     const {
       delayCondition,
       timeUnit,
-      dateColumn
+      dateColumn,
+      timeZone
     } = freshnessConditions[tableName];
-    createDataFreshnessAssertion(globalParams, tableName, delayCondition, timeUnit, dateColumn);
+    createDataFreshnessAssertion(globalParams, tableName, delayCondition, timeUnit, dateColumn, timeZone);
   }
 
   return assertions;
