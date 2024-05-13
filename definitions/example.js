@@ -36,7 +36,6 @@ const commonAssertionsResult = commonAssertions({
       "timeUnit": "MONTH",
       "delayCondition": 3,
       "timeZone": "-08"
-
     }
   },
   dataCompletenessConditions: {
