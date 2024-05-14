@@ -29,11 +29,13 @@ const commonAssertionsResult = commonAssertions({
       "dateColumn": "updated_date",
       "timeUnit": "DAY",
       "delayCondition": 1,
+      "timeZone": "America/Los_Angeles"
     },
     "second_table": {
       "dateColumn": "updated_date",
       "timeUnit": "MONTH",
       "delayCondition": 3,
+      "timeZone": "-08"
     }
   },
   dataCompletenessConditions: {
