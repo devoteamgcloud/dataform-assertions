@@ -32,6 +32,9 @@ const commonAssertionsResult = commonAssertions({
       "timeZone": "America/Los_Angeles"
     },
     "second_table": {
+      // If timeUnit is not DAY, WEEK, MONTH, QUARTER, or YEAR, dateColumn should be a TIMESTAMP.
+      // Check here for valid Date time units: https://cloud.google.com/bigquery/docs/reference/standard-sql/date_functions#date_diff
+      // Check here for valid Timestamp time units: https://cloud.google.com/bigquery/docs/reference/standard-sql/timestamp_functions#timestamp_diff
       "dateColumn": "TIMESTAMP(updated_date)",
       "timeUnit": "HOUR",
       "delayCondition": 3,
