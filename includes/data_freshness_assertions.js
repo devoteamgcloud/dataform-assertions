@@ -27,7 +27,9 @@ const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, t
                 WITH
                     freshness AS (
                         SELECT
-                            DATE_DIFF(CURRENT_TIMESTAMP("${timeZone}"), MAX(${dateColumn}), ${timeUnit}) AS delay
+                          ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
+                              ? `DATE_DIFF(CURRENT_DATE("${timeZone}"), MAX(${dateColumn}), ${timeUnit})`
+                              : `TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(${dateColumn}), ${timeUnit})`} AS delay
                         FROM
                             ${ctx.ref(tableName)}
                     )
