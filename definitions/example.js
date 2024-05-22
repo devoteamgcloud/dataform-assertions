@@ -33,7 +33,7 @@ const commonAssertionsResult = commonAssertions({
     },
     "second_table": {
       "dateColumn": "updated_date",
-      "timeUnit": "MONTH",
+      "timeUnit": "HOUR",
       "delayCondition": 3,
       "timeZone": "-08"
     }
