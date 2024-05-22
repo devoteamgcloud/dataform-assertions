@@ -28,8 +28,8 @@ const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, t
                     freshness AS (
                         SELECT
                             TIMESTAMP_DIFF(
-                                            TIMESTAMP(DATETIME(CURRENT_TIMESTAMP(), "${timeZone}")), 
-                                            TIMESTAMP(MAX(${dateColumn}), "${timeZone}"), 
+                                            TIMESTAMP(DATETIME(CURRENT_TIMESTAMP(), "${timeZone}")),
+                                            TIMESTAMP(MAX(${dateColumn}), "${timeZone}"),
                                             ${timeUnit}
                                            ) AS delay
                         FROM
