@@ -11,13 +11,14 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} filter - The condition to filter the data.
  * @param {string} tableName - The name of the table to check for data completeness.
  * @param {Object} columnConditions - An object mapping column names to their allowed percentage of null values. If a value is an object, it should have an `allowedPercentageNull` property.
  */
 
 const assertions = [];
 
-const createDataCompletenessAssertion = (globalParams, tableName, columnConditions) => {
+const createDataCompletenessAssertion = (globalParams, filter, tableName, columnConditions) => {
 
   for (let columnName in columnConditions) {
     const allowedPercentageNull = columnConditions[columnName];
@@ -27,10 +28,21 @@ const createDataCompletenessAssertion = (globalParams, tableName, columnConditio
       .schema(globalParams.schema)
       .description(`Check data completeness for ${tableName}.${columnName}, allowed percentage of null values: ${allowedPercentageNull}`)
       .tags("assert-data-completeness")
-      .query(ctx => `SELECT COUNT(*) AS total_rows,
+      .query(ctx => `
+                WITH
+                    filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(tableName)}
+                        WHERE
+                            ${filter}
+                    )      
+                    SELECT COUNT(*) AS total_rows,
                         SUM(CASE WHEN ${columnName} IS NULL THEN 1 ELSE 0 END) AS null_count
-                        FROM ${ctx.ref(tableName)}
-                        HAVING SAFE_DIVIDE(null_count, total_rows) > ${allowedPercentageNull / 100} AND null_count > 0 AND total_rows > 0`);
+                        FROM filtering
+                        HAVING SAFE_DIVIDE(null_count, total_rows) > ${allowedPercentageNull / 100} AND null_count > 0 AND total_rows > 0
+                    `);
 
     (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
 
@@ -41,11 +53,12 @@ const createDataCompletenessAssertion = (globalParams, tableName, columnConditio
 
 };
 
-module.exports = (globalParams, dataCompletenessConditions) => {
+module.exports = (globalParams, config, dataCompletenessConditions) => {
   // Loop through dataCompletenessConditions to create data completeness check assertions.
   for (let tableName in dataCompletenessConditions) {
     const columnConditions = dataCompletenessConditions[tableName];
-    createDataCompletenessAssertion(globalParams, tableName, columnConditions);
+    const filter = config[tableName]?.where ?? true;
+    createDataCompletenessAssertion(globalParams, filter, tableName, columnConditions);
   }
 
   return assertions;

@@ -11,6 +11,7 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} filter - The condition to filter the data.
  * @param {Object} parentTable - The name of the parent table in the foreign key relationship.
  * @param {Object} parentKey - The name of the column in the parent table that is the primary key.
  * @param {Object} childTable - The name of the child table in the foreign key relationship.
@@ -19,7 +20,7 @@
 
 const assertions = [];
 
-const createReferentialIntegrityAssertion = (globalParams, parentTable, parentKey, childTable, childKey) => {
+const createReferentialIntegrityAssertion = (globalParams, filter, parentTable, parentKey, childTable, childKey) => {
 
   const assertion = assert(`assert_referential_integrity_${parentTable}_${childTable}`)
     .database(globalParams.database)
@@ -27,10 +28,19 @@ const createReferentialIntegrityAssertion = (globalParams, parentTable, parentKe
     .description(`Check referential integrity for ${childTable}.${childKey} referencing ${parentTable}.${parentKey}`)
     .tags("assert-referential-integrity")
     .query(ctx => `
-          SELECT pt.${parentKey}
-          FROM ${ctx.ref(parentTable)} AS pt
-          LEFT JOIN ${ctx.ref(childTable)} AS t ON t.${childKey} = pt.${parentKey}
-          WHERE t.${childKey} IS NULL
+                WITH
+                    filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(parentTable)}
+                        WHERE
+                            ${filter}
+                    )      
+                    SELECT pt.${parentKey}
+                    FROM filtering AS pt
+                    LEFT JOIN ${ctx.ref(childTable)} AS t ON t.${childKey} = pt.${parentKey}
+                    WHERE t.${childKey} IS NULL
         `);
 
   (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
@@ -40,16 +50,17 @@ const createReferentialIntegrityAssertion = (globalParams, parentTable, parentKe
   assertions.push(assertion);
 };
 
-module.exports = (globalParams, referentialIntegrityConditions) => {
+module.exports = (globalParams, config, referentialIntegrityConditions) => {
   for (let parentTable in referentialIntegrityConditions) {
     const relationships = referentialIntegrityConditions[parentTable];
+    const filter = config[parentTable]?.where ?? true;
 
     relationships.forEach(({
       parentKey,
       childTable,
       childKey
     }) => {
-      createReferentialIntegrityAssertion(globalParams, parentTable, parentKey, childTable, childKey);
+      createReferentialIntegrityAssertion(globalParams, filter, parentTable, parentKey, childTable, childKey);
     })
   }
   return assertions;
