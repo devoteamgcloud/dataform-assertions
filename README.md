@@ -63,7 +63,6 @@ const commonAssertionsResult = commonAssertions({
 
 You can find a more complete example here: [definitions/example.js](./definitions/example.js).
 
-
 ## Available assertions
 
 This package includes the following types of assertions:
