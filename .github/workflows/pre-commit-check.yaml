@@ -12,3 +12,4 @@ jobs:
         with:
           node-version: '20.x'
       - uses: pre-commit/action@v3.0.1
+      - run: definitions/example.js
