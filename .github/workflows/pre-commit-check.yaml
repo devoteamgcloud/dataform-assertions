@@ -12,4 +12,4 @@ jobs:
         with:
           node-version: '20.x'
       - uses: pre-commit/action@v3.0.1
-      - run: cat definitions/example.js
+      - run: pre-commit run --all-files
