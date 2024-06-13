@@ -16,4 +16,4 @@ jobs:
           python-version: '3.10'
       - run: pip install pre-commit
       - run: pre-commit run --all-files
-      - run: dataform compile
+      - run: npm i -g @dataform/cli@latest && dataform compile
