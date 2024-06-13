@@ -36,7 +36,6 @@ const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCond
                         WHERE
                             ${filter}
                     ),
-
                     freshness AS (
                         SELECT
                           ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
