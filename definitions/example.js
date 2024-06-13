@@ -26,7 +26,7 @@ const commonAssertionsResult = commonAssertions({
     }
   },
   uniqueKeyConditions: {
-    "first_tabl": ["id"],
+    "first_table": ["id"],
     "second_table": ["id", "updated_date"]
   },
   dataFreshnessConditions: {
