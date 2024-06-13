@@ -12,5 +12,4 @@ jobs:
         with:
           node-version: '20.x'
       - run: npm i -g @dataform/cli@latest
-      - uses: pre-commit-ci/lite-action@v1.0.2
-        if: always()
+      - uses: pre-commit/action@v3.0.1
