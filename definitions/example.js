@@ -11,6 +11,11 @@ const commonAssertionsResult = commonAssertions({
     // Set the 'dataform.projectConfig.vars.env' var in 'dataform.json' for this to work.
     // "disabledInEnvs": ["dv", "qa"]
   },
+  config: {
+    "first_table": {
+      "where": "updated_date >= CURRENT_DATE() - 7"
+    },
+  },
   rowConditions: {
     "first_table": {
       "id_not_null": "id IS NOT NULL",

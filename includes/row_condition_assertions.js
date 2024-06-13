@@ -11,6 +11,7 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} filter - The condition to filter the data.
  * @param {string} tableName - The name of the table to check for row conditions.
  * @param {string} conditionName - The name of the condition to check.
  * @param {string} conditionQuery - The SQL query that defines the condition to check.
@@ -18,15 +19,26 @@
 
 const assertions = [];
 
-const createRowConditionAssertion = (globalParams, tableName, conditionName, conditionQuery) => {
+const createRowConditionAssertion = (globalParams, filter, tableName, conditionName, conditionQuery) => {
   const assertion = assert(`assert_${conditionName.replace(/-/g , "_")}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
     .description(`Assert that rows in ${tableName} meet ${conditionName}`)
     .tags("assert-row-condition")
-    .query(ctx => `SELECT "Condition not met: ${conditionQuery}, Table: ${ctx.ref(tableName)}" AS assertion_description
-                       FROM ${ctx.ref(tableName)}
-                       WHERE NOT (${conditionQuery})`);
+    .query(ctx => `
+                WITH
+                    filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(tableName)}
+                        WHERE
+                            ${filter}
+                    )
+                    SELECT "Condition not met: ${conditionQuery}, Table: ${ctx.ref(tableName)}" AS assertion_description
+                        FROM filtering
+                        WHERE NOT (${conditionQuery})
+                    `);
 
   (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
 
@@ -35,13 +47,14 @@ const createRowConditionAssertion = (globalParams, tableName, conditionName, con
   assertions.push(assertion);
 };
 
-module.exports = (globalParams, rowConditions) => {
+module.exports = (globalParams, config, rowConditions) => {
 
   // Loop through rowConditions to create assertions.
   for (let tableName in rowConditions) {
     for (let conditionName in rowConditions[tableName]) {
       const conditionQuery = rowConditions[tableName][conditionName];
-      createRowConditionAssertion(globalParams, tableName, conditionName, conditionQuery);
+      const filter = config[tableName]?.where ?? true;
+      createRowConditionAssertion(globalParams, filter, tableName, conditionName, conditionQuery);
     }
   }
 

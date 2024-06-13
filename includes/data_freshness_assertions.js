@@ -9,15 +9,18 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {string} filter - The condition to filter the data.
  * @param {string} tableName - The name of the table to check for data freshness.
  * @param {number} delayCondition - The maximum allowed delay (in units specified by `timeUnit`) for the data to be considered fresh.
  * @param {string} timeUnit - The unit of time to use for the delay condition. This should be a string that is valid in a SQL `DATE_DIFF` function, such as 'DAY', 'HOUR', etc.
  * @param {string} dateColumn - The name of the date column to check for data freshness.
+ * @param {string} timeZone - The name of the time zone for the date column.
  */
 
 const assertions = [];
 
-const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
+const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
+  
   const assertion = assert(`assert_freshness_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
@@ -25,13 +28,22 @@ const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, t
     .tags("assert-data-freshness")
     .query(ctx => `
                 WITH
+                    filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(tableName)}
+                        WHERE
+                            ${filter}
+                    ),      
+                    
                     freshness AS (
                         SELECT
                           ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
                               ? `DATE_DIFF(CURRENT_DATE("${timeZone}"), MAX(${dateColumn}), ${timeUnit})`
                               : `TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(${dateColumn}), ${timeUnit})`} AS delay
                         FROM
-                            ${ctx.ref(tableName)}
+                            filtering
                     )
                 SELECT
                     *
@@ -48,7 +60,7 @@ const createDataFreshnessAssertion = (globalParams, tableName, delayCondition, t
   assertions.push(assertion);
 };
 
-module.exports = (globalParams, freshnessConditions) => {
+module.exports = (globalParams, config, freshnessConditions) => {
 
   // Loop through freshnessConditions to create assertions.
   for (let tableName in freshnessConditions) {
@@ -58,7 +70,8 @@ module.exports = (globalParams, freshnessConditions) => {
       dateColumn,
       timeZone
     } = freshnessConditions[tableName];
-    createDataFreshnessAssertion(globalParams, tableName, delayCondition, timeUnit, dateColumn, timeZone);
+    const filter = config[tableName]?.where ?? true;
+    createDataFreshnessAssertion(globalParams, filter, tableName, delayCondition, timeUnit, dateColumn, timeZone);
   }
 
   return assertions;
