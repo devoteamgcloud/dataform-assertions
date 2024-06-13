@@ -14,3 +14,4 @@ jobs:
       - run: npm i -g @dataform/cli@latest
       - run: dataform install
       - run: dataform compile
+      - run: dataform format
