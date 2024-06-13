@@ -1,4 +1,4 @@
-name: Dataform compilation check
+name: Pre-commit check
 on:
   pull_request:
     branches:
