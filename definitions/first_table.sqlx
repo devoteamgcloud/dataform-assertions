@@ -6,8 +6,7 @@ SELECT
   1 AS id,
   CURRENT_DATE() AS updated_date
 UNION ALL
-SELECT
-  1 AS id, CURRENT_DATE() AS updated_date
+SELECT 1 AS id, CURRENT_DATE() AS updated_date
 UNION ALL
 SELECT
   2 AS id,

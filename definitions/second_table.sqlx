@@ -7,7 +7,8 @@ SELECT
   DATE(1970, 1, 1) AS updated_date
 UNION ALL
 SELECT
-  2 AS id,DATE(1970, 1, 1) AS updated_date
+  2 AS id,
+  DATE(1970, 1, 1) AS updated_date
 UNION ALL
 SELECT
   NULL AS id,
