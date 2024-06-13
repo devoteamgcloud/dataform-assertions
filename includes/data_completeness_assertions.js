@@ -37,7 +37,7 @@ const createDataCompletenessAssertion = (globalParams, filter, tableName, column
                             ${ctx.ref(tableName)}
                         WHERE
                             ${filter}
-                    )      
+                    )
                     SELECT COUNT(*) AS total_rows,
                         SUM(CASE WHEN ${columnName} IS NULL THEN 1 ELSE 0 END) AS null_count
                         FROM filtering

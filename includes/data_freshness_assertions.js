@@ -20,7 +20,7 @@
 const assertions = [];
 
 const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
-  
+
   const assertion = assert(`assert_freshness_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
@@ -35,8 +35,7 @@ const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCond
                             ${ctx.ref(tableName)}
                         WHERE
                             ${filter}
-                    ),      
-                    
+                    ),
                     freshness AS (
                         SELECT
                           ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
