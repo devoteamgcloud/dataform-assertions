@@ -30,7 +30,7 @@ const commonAssertionsResult = commonAssertions({
     "second_table": ["id", "updated_date"]
   },
   dataFreshnessConditions: {
-    "first_tabl": {
+    "first_table": {
       "dateColumn": "updated_date",
       "timeUnit": "DAY",
       "delayCondition": 1,
