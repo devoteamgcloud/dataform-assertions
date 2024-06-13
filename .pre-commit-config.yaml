@@ -14,6 +14,6 @@ repos:
     - id: no-commit-to-branch
       args: [--branch, main]
 - repo: https://github.com/devoteamgcloud/pre-commit-dataform
-  rev: v1.0.2
+  rev: v1.0.3beta
   hooks:
     - id: dataform_format
