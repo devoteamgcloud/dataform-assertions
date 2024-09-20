@@ -40,7 +40,7 @@ const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filte
                         SELECT
                           ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
                               ? `DATE_DIFF(CURRENT_DATE("${timeZone}"), MAX(${dateColumn}), ${timeUnit})`
-                              : `TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(${dateColumn}), ${timeUnit})`} AS delay
+                              : `TIMESTAMP_DIFF(DATETIME(CURRENT_TIMESTAMP(), "${timeZone}"), MAX(${dateColumn}), ${timeUnit})`} AS delay
                         FROM
                             filtering
                     )
@@ -71,7 +71,7 @@ module.exports = (globalParams, config, freshnessConditions) => {
         timeZone
       } = tableNames[tableName];
       const filter = config[schemaName][tableName]?.where ?? true;
-      createDataFreshnessAssertion(globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn);
+      createDataFreshnessAssertion(globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn, timeZone);
     }
   }
 
