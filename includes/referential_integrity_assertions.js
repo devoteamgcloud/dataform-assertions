@@ -4,7 +4,7 @@
  * This file contains a function to create referential integrity assertions for specific tables in a database.
  * The assertions are used to check if the foreign key relationships are maintained between tables.
  * The conditions for referential integrity checks are defined in an object format:
- * { parentTable: [{ parentKey, childTable, childKey }, ...], ... }
+ * schemaName : { parentTable: [{ parentKey, childTable, childKey }, ...], ... }
  *
  * The function `createReferentialIntegrityAssertions` takes in global parameters and the referential integrity conditions.
  */
@@ -68,7 +68,7 @@ module.exports = (globalParams, config, referentialIntegrityConditions) => {
     const parentTables = referentialIntegrityConditions[parentSchema];
     for (let parentTable in parentTables) {
       const relationships = parentTables[parentTable];
-      const parentFilter = config[parentTable]?.where ?? true;
+      const parentFilter = config[parentSchema][parentTable]?.where ?? true;
 
       relationships.forEach(({
         parentKey,

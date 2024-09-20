@@ -12,9 +12,11 @@ const commonAssertionsResult = commonAssertions({
     // "disabledInEnvs": ["dv", "qa"]
   },
   config: {
-    "first_table": {
-      "where": "updated_date >= CURRENT_DATE() - 7"
-    },
+    "dataform": {
+      "first_table": {
+        "where": "updated_date >= CURRENT_DATE() - 7"
+      }
+    }
   },
   rowConditions: {
     // Format: "schema": { "table": { "conditionName": "conditionQuery", ... }, ... }

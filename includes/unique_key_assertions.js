@@ -4,7 +4,7 @@
  * This file contains a function to create unique key assertions for specific tables in a database.
  * The assertions are used to check if the combination of values in specified columns forms a unique key for each row in the table.
  * The conditions for unique key checks are defined in an object format:
- * { tableName: [column1, column2, ...], ... }
+ * schemaName : { tableName: [column1, column2, ...], ... }
  *
  * The function `createUniqueKeyAssertion` takes in global parameters, a table name, and an array of column names to create these assertions.
  */
@@ -57,7 +57,7 @@ module.exports = (globalParams, config, uniqueKeyConditions) => {
     const tableNames = uniqueKeyConditions[schemaName];
     for (let tableName in tableNames) {
       const columns = tableNames[tableName];
-      const filter = config[tableName]?.where ?? true;
+      const filter = config[schemaName][tableName]?.where ?? true;
       createUniqueKeyAssertion(globalParams, schemaName, tableName, filter, columns);
     }
   }

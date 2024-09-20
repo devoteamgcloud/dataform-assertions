@@ -5,6 +5,7 @@
     "defaultDatabase": "sandbox-hrialan",
     "defaultLocation": "EU",
     "vars":{
-        "env":"dv"
+        "env":"dv",
+        "example":""
     }
 }
