@@ -20,7 +20,7 @@
 
 const assertions = [];
 
-const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn) => {
+const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
   const assertion = assert(`assert_freshness_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
@@ -67,10 +67,11 @@ module.exports = (globalParams, config, freshnessConditions) => {
       const {
         delayCondition,
         timeUnit,
-        dateColumn
+        dateColumn,
+        timeZone
       } = tableNames[tableName];
       const filter = config[schemaName][tableName]?.where ?? true;
-      createDataFreshnessAssertion(globalParams, schemaName, tableName, delayCondition, timeUnit, dateColumn);
+      createDataFreshnessAssertion(globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn);
     }
   }
 
