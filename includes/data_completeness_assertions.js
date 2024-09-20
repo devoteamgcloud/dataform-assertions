@@ -4,7 +4,7 @@
  * This file contains a function to create data completeness assertions for specific tables and columns in a database.
  * The assertions are used to check if the percentage of null values in each specified column exceeds an allowed limit.
  * The conditions for data completeness checks are defined in an object format:
- * { tableName: { columnName: allowedPercentageNull, ... }, ... }
+ * schemaName : { tableName: { columnName: allowedPercentageNull, ... }, ... }
  *
  * The function `createDataCompletenessAssertion` takes in global parameters, a table name, and column conditions to create these assertions.
  */
@@ -59,7 +59,7 @@ module.exports = (globalParams, config, dataCompletenessConditions) => {
     const tableNames = dataCompletenessConditions[schemaName];
     for (let tableName in tableNames) {
       const columnConditions = tableNames[tableName];
-      const filter = config[tableName]?.where ?? true;
+      const filter = config[schemaName][tableName]?.where ?? true;
       createDataCompletenessAssertion(globalParams, schemaName, tableName, filter, columnConditions);
     }
   }

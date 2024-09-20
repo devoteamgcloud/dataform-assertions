@@ -20,7 +20,7 @@
 
 const assertions = [];
 
-const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn) => {
+const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
   const assertion = assert(`assert_freshness_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
@@ -40,7 +40,7 @@ const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filte
                         SELECT
                           ${["DAY", "WEEK", "MONTH", "QUARTER", "YEAR"].includes(timeUnit)
                               ? `DATE_DIFF(CURRENT_DATE("${timeZone}"), MAX(${dateColumn}), ${timeUnit})`
-                              : `TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(${dateColumn}), ${timeUnit})`} AS delay
+                              : `TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), TIMESTAMP(MAX(${dateColumn}),"${timeZone}"), ${timeUnit})`} AS delay
                         FROM
                             filtering
                     )
@@ -59,7 +59,6 @@ const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filte
   assertions.push(assertion);
 };
 
-
 module.exports = (globalParams, config, freshnessConditions) => {
   // Loop through freshnessConditions to create assertions.
   for (let schemaName in freshnessConditions) {
@@ -68,10 +67,11 @@ module.exports = (globalParams, config, freshnessConditions) => {
       const {
         delayCondition,
         timeUnit,
-        dateColumn
+        dateColumn,
+        timeZone
       } = tableNames[tableName];
-      const filter = config[tableName]?.where ?? true;
-      createDataFreshnessAssertion(globalParams, schemaName, tableName, delayCondition, timeUnit, dateColumn);
+      const filter = config[schemaName][tableName]?.where ?? true;
+      createDataFreshnessAssertion(globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn, timeZone);
     }
   }
 

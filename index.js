@@ -45,7 +45,7 @@ module.exports = ({
     const uniqueKeyAssertionsResult = unique_key_assertions(globalAssertionsParams, config, uniqueKeyConditions);
     const dataFreshnessAssertionsResult = data_freshness_assertions(globalAssertionsParams, config, dataFreshnessConditions);
     const dataCompletenessAssertionsResult = data_completeness_assertions(globalAssertionsParams, config, dataCompletenessConditions);
-    const referentialIntegrityAssertionsResult = referential_integrity_assertions(globalAssertionsParams, config, referentialIntegrityConditions); // New assertion
+    const referentialIntegrityAssertionsResult = referential_integrity_assertions(globalAssertionsParams, config, referentialIntegrityConditions);
 
     return {
         rowConditionAssertions: rowConditionAssertionsResult,

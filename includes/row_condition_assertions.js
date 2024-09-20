@@ -4,7 +4,7 @@
  * This file contains a function to create row condition assertions for specific tables in a database.
  * The assertions are used to check if the rows in each specified table meet a certain condition.
  * The conditions for row checks are defined in an object format:
- * { tableName: { conditionName: conditionQuery, ... }, ... }
+ * schemaName : { tableName: { conditionName: conditionQuery, ... }, ... }
  *
  * The function `createRowConditionAssertion` takes in global parameters, a table name, a condition name, and a condition query to create these assertions.
  */
@@ -56,7 +56,7 @@ module.exports = (globalParams, config, rowConditions) => {
     for (let tableName in tableNames) {
       for (let conditionName in tableNames[tableName]) {
         const conditionQuery = tableNames[tableName][conditionName];
-        const filter = config[tableName]?.where ?? true;
+        const filter = config[schemaName][tableName]?.where ?? true;
         createRowConditionAssertion(
           globalParams,
           schemaName,

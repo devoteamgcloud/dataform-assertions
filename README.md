@@ -54,8 +54,10 @@ const commonAssertionsResult = commonAssertions({
     "disabledInEnvs": ["dv"] // Check match with 'dataform.projectConfig.vars.env' value
   },
   rowConditions: {
-    "your_table": {
-      "id_not_null": "id IS NOT NULL",
+    "your_schema": {
+      "your_table": {
+        "id_not_null": "id IS NOT NULL",
+      }
     }
   }
 });
