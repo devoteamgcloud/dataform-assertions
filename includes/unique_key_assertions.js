@@ -11,20 +11,21 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
- * @param {string} filter - The condition to filter the data.
+ * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for unique keys.
+ * @param {string} filter - The condition to filter the data.
  * @param {Array} columns - An array of column names that should form a unique key.
  */
 
 const assertions = [];
 
-const createUniqueKeyAssertion = (globalParams, filter, tableName, columns) => {
+const createUniqueKeyAssertion = (globalParams, schemaName, tableName, filter, columns) => {
   const uniqueColumns = columns.join(', ');
 
-  const assertion = assert(`assert_unique_key_${tableName}`)
+  const assertion = assert(`assert_unique_key_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
-    .description(`Check that values in columns (${uniqueColumns}) in ${tableName} form a unique key`)
+    .description(`Check that values in columns (${uniqueColumns}) in ${schemaName}.${tableName} form a unique key`)
     .tags("assert-unique-key")
     .query(ctx => `
                 WITH
@@ -32,7 +33,7 @@ const createUniqueKeyAssertion = (globalParams, filter, tableName, columns) => {
                         SELECT
                             *
                         FROM
-                            ${ctx.ref(tableName)}
+                            ${ctx.ref(schemaName, tableName)}
                         WHERE
                             ${filter}
                     )
@@ -52,10 +53,13 @@ const createUniqueKeyAssertion = (globalParams, filter, tableName, columns) => {
 module.exports = (globalParams, config, uniqueKeyConditions) => {
 
   // Loop through uniqueKeyConditions to create unique key check assertions.
-  for (let tableName in uniqueKeyConditions) {
-    const columns = uniqueKeyConditions[tableName];
-    const filter = config[tableName]?.where ?? true;
-    createUniqueKeyAssertion(globalParams, filter, tableName, columns);
+  for (let schemaName in uniqueKeyConditions) {
+    const tableNames = uniqueKeyConditions[schemaName];
+    for (let tableName in tableNames) {
+      const columns = tableNames[tableName];
+      const filter = config[tableName]?.where ?? true;
+      createUniqueKeyAssertion(globalParams, schemaName, tableName, filter, columns);
+    }
   }
 
   return assertions;

@@ -11,22 +11,22 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
- * @param {string} filter - The condition to filter the data.
+ * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for data completeness.
+ * @param {string} filter - The condition to filter the data.
  * @param {Object} columnConditions - An object mapping column names to their allowed percentage of null values. If a value is an object, it should have an `allowedPercentageNull` property.
  */
 
 const assertions = [];
 
-const createDataCompletenessAssertion = (globalParams, filter, tableName, columnConditions) => {
-
+const createDataCompletenessAssertion = (globalParams, schemaName, tableName, filter, columnConditions) => {
   for (let columnName in columnConditions) {
     const allowedPercentageNull = columnConditions[columnName];
 
-    const assertion = assert(`assert_data_completeness_${tableName}_${columnName}`)
+    const assertion = assert(`assert_data_completeness_${schemaName}_${tableName}_${columnName}`)
       .database(globalParams.database)
       .schema(globalParams.schema)
-      .description(`Check data completeness for ${tableName}.${columnName}, allowed percentage of null values: ${allowedPercentageNull}`)
+      .description(`Check data completeness for ${schemaName}.${tableName}.${columnName}, allowed percentage of null values: ${allowedPercentageNull}`)
       .tags("assert-data-completeness")
       .query(ctx => `
                 WITH
@@ -34,7 +34,7 @@ const createDataCompletenessAssertion = (globalParams, filter, tableName, column
                         SELECT
                             *
                         FROM
-                            ${ctx.ref(tableName)}
+                            ${ctx.ref(schemaName, tableName)}
                         WHERE
                             ${filter}
                     )
@@ -55,11 +55,13 @@ const createDataCompletenessAssertion = (globalParams, filter, tableName, column
 
 module.exports = (globalParams, config, dataCompletenessConditions) => {
   // Loop through dataCompletenessConditions to create data completeness check assertions.
-  for (let tableName in dataCompletenessConditions) {
-    const columnConditions = dataCompletenessConditions[tableName];
-    const filter = config[tableName]?.where ?? true;
-    createDataCompletenessAssertion(globalParams, filter, tableName, columnConditions);
+  for (let schemaName in dataCompletenessConditions) {
+    const tableNames = dataCompletenessConditions[schemaName];
+    for (let tableName in tableNames) {
+      const columnConditions = tableNames[tableName];
+      const filter = config[tableName]?.where ?? true;
+      createDataCompletenessAssertion(globalParams, schemaName, tableName, filter, columnConditions);
+    }
   }
-
   return assertions;
 };

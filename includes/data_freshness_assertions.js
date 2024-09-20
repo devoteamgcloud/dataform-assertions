@@ -9,8 +9,9 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
- * @param {string} filter - The condition to filter the data.
+ * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for data freshness.
+ * @param {string} filter - The condition to filter the data.
  * @param {number} delayCondition - The maximum allowed delay (in units specified by `timeUnit`) for the data to be considered fresh.
  * @param {string} timeUnit - The unit of time to use for the delay condition. This should be a string that is valid in a SQL `DATE_DIFF` function, such as 'DAY', 'HOUR', etc.
  * @param {string} dateColumn - The name of the date column to check for data freshness.
@@ -19,12 +20,11 @@
 
 const assertions = [];
 
-const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCondition, timeUnit, dateColumn, timeZone = "UTC") => {
-
-  const assertion = assert(`assert_freshness_${tableName}`)
+const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn) => {
+  const assertion = assert(`assert_freshness_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
-    .description(`Assert that data in ${tableName} is fresh with a delay less than ${delayCondition} ${timeUnit}`)
+    .description(`Assert that data in ${schemaName}.${tableName} is fresh with a delay less than ${delayCondition} ${timeUnit}`)
     .tags("assert-data-freshness")
     .query(ctx => `
                 WITH
@@ -32,7 +32,7 @@ const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCond
                         SELECT
                             *
                         FROM
-                            ${ctx.ref(tableName)}
+                            ${ctx.ref(schemaName, tableName)}
                         WHERE
                             ${filter}
                     ),
@@ -59,18 +59,20 @@ const createDataFreshnessAssertion = (globalParams, filter, tableName, delayCond
   assertions.push(assertion);
 };
 
-module.exports = (globalParams, config, freshnessConditions) => {
 
+module.exports = (globalParams, config, freshnessConditions) => {
   // Loop through freshnessConditions to create assertions.
-  for (let tableName in freshnessConditions) {
-    const {
-      delayCondition,
-      timeUnit,
-      dateColumn,
-      timeZone
-    } = freshnessConditions[tableName];
-    const filter = config[tableName]?.where ?? true;
-    createDataFreshnessAssertion(globalParams, filter, tableName, delayCondition, timeUnit, dateColumn, timeZone);
+  for (let schemaName in freshnessConditions) {
+    const tableNames = freshnessConditions[schemaName];
+    for (let tableName in tableNames) {
+      const {
+        delayCondition,
+        timeUnit,
+        dateColumn
+      } = tableNames[tableName];
+      const filter = config[tableName]?.where ?? true;
+      createDataFreshnessAssertion(globalParams, schemaName, tableName, delayCondition, timeUnit, dateColumn);
+    }
   }
 
   return assertions;

@@ -11,19 +11,21 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
- * @param {string} parentFilter - The condition to filter the data of parent table.
- * @param {string} childFilter - The condition to filter the data of child table.
+ * @param {Object} parentSchema -
  * @param {Object} parentTable - The name of the parent table in the foreign key relationship.
  * @param {Object} parentKey - The name of the column in the parent table that is the primary key.
+ * @param {string} parentFilter - The condition to filter the data of parent table.
+ * @param {Object} childSchema -
  * @param {Object} childTable - The name of the child table in the foreign key relationship.
  * @param {Object} childKey - The name of the column in the child table that is the foreign key.
+ * @param {string} childFilter - The condition to filter the data of child table.
  */
 
 const assertions = [];
 
-const createReferentialIntegrityAssertion = (globalParams, parentFilter, childFilter, parentTable, parentKey, childTable, childKey) => {
+const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentTable, parentKey, parentFilter, childSchema, childTable, childKey, childFilter) => {
 
-  const assertion = assert(`assert_referential_integrity_${parentTable}_${childTable}`)
+  const assertion = assert(`assert_referential_integrity_${parentSchema}_${parentTable}_${childSchema}_${childTable}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
     .description(`Check referential integrity for ${childTable}.${childKey} referencing ${parentTable}.${parentKey}`)
@@ -34,7 +36,7 @@ const createReferentialIntegrityAssertion = (globalParams, parentFilter, childFi
                         SELECT
                             *
                         FROM
-                            ${ctx.ref(parentTable)}
+                            ${ctx.ref(parentSchema, parentTable)}
                         WHERE
                             ${parentFilter}
                     ),
@@ -43,7 +45,7 @@ const createReferentialIntegrityAssertion = (globalParams, parentFilter, childFi
                         SELECT
                             *
                         FROM
-                            ${ctx.ref(childTable)}
+                            ${ctx.ref(childSchema, childTable)}
                         WHERE
                             ${childFilter}
                     )
@@ -62,18 +64,32 @@ const createReferentialIntegrityAssertion = (globalParams, parentFilter, childFi
 };
 
 module.exports = (globalParams, config, referentialIntegrityConditions) => {
-  for (let parentTable in referentialIntegrityConditions) {
-    const relationships = referentialIntegrityConditions[parentTable];
-    const parentFilter = config[parentTable]?.where ?? true;
+  for (let parentSchema in referentialIntegrityConditions) {
+    const parentTables = referentialIntegrityConditions[parentSchema];
+    for (let parentTable in parentTables) {
+      const relationships = parentTables[parentTable];
+      const parentFilter = config[parentTable]?.where ?? true;
 
-    relationships.forEach(({
-      parentKey,
-      childTable,
-      childKey
-    }) => {
-      const childFilter = config[childTable]?.where ?? true;
-      createReferentialIntegrityAssertion(globalParams, parentFilter, childFilter, parentTable, parentKey, childTable, childKey);
-    })
-  }
+      relationships.forEach(({
+        parentKey,
+        childSchema,
+        childTable,
+        childKey
+      }) => {
+        const childFilter = config[childTable]?.where ?? true;
+        createReferentialIntegrityAssertion(
+          globalParams,
+          parentSchema,
+          parentTable,
+          parentKey,
+          parentFilter,
+          childSchema,
+          childTable,
+          childKey,
+          childFilter
+        );
+      })
+    }
+  };
   return assertions;
 };
