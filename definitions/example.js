@@ -20,7 +20,7 @@ const commonAssertionsResult = commonAssertions({
   },
   rowConditions: {
     // Format: "schema": { "table": { "conditionName": "conditionQuery", ... }, ... }
-    "dataform": {
+    ["dataform" + dataform.projectConfig.vars.example]: {
       "first_table": {
         "id_not_null": "id IS NOT NULL",
         "id_strict_positive": "id > 0"
