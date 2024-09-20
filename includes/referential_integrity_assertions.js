@@ -11,15 +11,19 @@
 
 /**
  * @param {Object} globalParams - See index.js for details.
+ * @param {Object} parentSchema -
  * @param {Object} parentTable - The name of the parent table in the foreign key relationship.
  * @param {Object} parentKey - The name of the column in the parent table that is the primary key.
+ * @param {string} parentFilter - The condition to filter the data of parent table.
+ * @param {Object} childSchema -
  * @param {Object} childTable - The name of the child table in the foreign key relationship.
  * @param {Object} childKey - The name of the column in the child table that is the foreign key.
+ * @param {string} childFilter - The condition to filter the data of child table.
  */
 
 const assertions = [];
 
-const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentTable, parentKey, childSchema, childTable, childKey) => {
+const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentTable, parentKey, parentFilter, childSchema, childTable, childKey, childFilter) => {
 
   const assertion = assert(`assert_referential_integrity_${parentSchema}_${parentTable}_${childSchema}_${childTable}`)
     .database(globalParams.database)
@@ -27,10 +31,29 @@ const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentT
     .description(`Check referential integrity for ${childTable}.${childKey} referencing ${parentTable}.${parentKey}`)
     .tags("assert-referential-integrity")
     .query(ctx => `
-          SELECT pt.${parentKey}
-          FROM ${ctx.ref(parentSchema, parentTable)} AS pt
-          LEFT JOIN ${ctx.ref(childSchema, childTable)} AS t ON t.${childKey} = pt.${parentKey}
-          WHERE t.${childKey} IS NULL
+                WITH
+                    parent_filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(parentSchema, parentTable)}
+                        WHERE
+                            ${parentFilter}
+                    ),
+
+                    child_filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(childSchema, childTable)}
+                        WHERE
+                            ${childFilter}
+                    )
+
+                    SELECT pt.${parentKey}
+                    FROM parent_filtering AS pt
+                    LEFT JOIN child_filtering AS t ON t.${childKey} = pt.${parentKey}
+                    WHERE t.${childKey} IS NULL
         `);
 
   (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
@@ -40,26 +63,30 @@ const createReferentialIntegrityAssertion = (globalParams, parentSchema, parentT
   assertions.push(assertion);
 };
 
-module.exports = (globalParams, referentialIntegrityConditions) => {
+module.exports = (globalParams, config, referentialIntegrityConditions) => {
   for (let parentSchema in referentialIntegrityConditions) {
     const parentTables = referentialIntegrityConditions[parentSchema];
     for (let parentTable in parentTables) {
       const relationships = parentTables[parentTable];
-
+      const parentFilter = config[parentTable]?.where ?? true;
+      
       relationships.forEach(({
         parentKey,
         childSchema,
         childTable,
         childKey
       }) => {
+        const childFilter = config[childTable]?.where ?? true;
         createReferentialIntegrityAssertion(
           globalParams,
           parentSchema,
           parentTable,
           parentKey,
+          parentFilter,
           childSchema,
           childTable,
-          childKey
+          childKey,
+          childFilter
         );
       })
     }

@@ -34,17 +34,18 @@ module.exports = ({
         tags: [],
         disabledInEnvs: []
     },
+    config = {},
     rowConditions = {},
     uniqueKeyConditions = {},
     dataFreshnessConditions = {},
     dataCompletenessConditions = {},
     referentialIntegrityConditions = {}
 }) => {
-    const rowConditionAssertionsResult = row_condition_assertions(globalAssertionsParams, rowConditions);
-    const uniqueKeyAssertionsResult = unique_key_assertions(globalAssertionsParams, uniqueKeyConditions);
-    const dataFreshnessAssertionsResult = data_freshness_assertions(globalAssertionsParams, dataFreshnessConditions);
-    const dataCompletenessAssertionsResult = data_completeness_assertions(globalAssertionsParams, dataCompletenessConditions);
-    const referentialIntegrityAssertionsResult = referential_integrity_assertions(globalAssertionsParams, referentialIntegrityConditions); // New assertion
+    const rowConditionAssertionsResult = row_condition_assertions(globalAssertionsParams, config, rowConditions);
+    const uniqueKeyAssertionsResult = unique_key_assertions(globalAssertionsParams, config, uniqueKeyConditions);
+    const dataFreshnessAssertionsResult = data_freshness_assertions(globalAssertionsParams, config, dataFreshnessConditions);
+    const dataCompletenessAssertionsResult = data_completeness_assertions(globalAssertionsParams, config, dataCompletenessConditions);
+    const referentialIntegrityAssertionsResult = referential_integrity_assertions(globalAssertionsParams, config, referentialIntegrityConditions); // New assertion
 
     return {
         rowConditionAssertions: rowConditionAssertionsResult,

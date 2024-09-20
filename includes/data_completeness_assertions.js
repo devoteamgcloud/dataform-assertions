@@ -13,13 +13,13 @@
  * @param {Object} globalParams - See index.js for details.
  * @param {string} schemaName - The name of the schema to check for unique keys.
  * @param {string} tableName - The name of the table to check for data completeness.
+ * @param {string} filter - The condition to filter the data.
  * @param {Object} columnConditions - An object mapping column names to their allowed percentage of null values. If a value is an object, it should have an `allowedPercentageNull` property.
  */
 
 const assertions = [];
 
-const createDataCompletenessAssertion = (globalParams, schemaName, tableName, columnConditions) => {
-
+const createDataCompletenessAssertion = (globalParams, schemaName, tableName, filter, columnConditions) => {
   for (let columnName in columnConditions) {
     const allowedPercentageNull = columnConditions[columnName];
 
@@ -28,10 +28,21 @@ const createDataCompletenessAssertion = (globalParams, schemaName, tableName, co
       .schema(globalParams.schema)
       .description(`Check data completeness for ${schemaName}.${tableName}.${columnName}, allowed percentage of null values: ${allowedPercentageNull}`)
       .tags("assert-data-completeness")
-      .query(ctx => `SELECT COUNT(*) AS total_rows,
+      .query(ctx => `
+                WITH
+                    filtering AS (
+                        SELECT
+                            *
+                        FROM
+                            ${ctx.ref(schemaName, tableName)}
+                        WHERE
+                            ${filter}
+                    )
+                    SELECT COUNT(*) AS total_rows,
                         SUM(CASE WHEN ${columnName} IS NULL THEN 1 ELSE 0 END) AS null_count
-                        FROM ${ctx.ref(schemaName, tableName)}
-                        HAVING SAFE_DIVIDE(null_count, total_rows) > ${allowedPercentageNull / 100} AND null_count > 0 AND total_rows > 0`);
+                        FROM filtering
+                        HAVING SAFE_DIVIDE(null_count, total_rows) > ${allowedPercentageNull / 100} AND null_count > 0 AND total_rows > 0
+                    `);
 
     (globalParams.tags && globalParams.tags.forEach((tag) => assertion.tags(tag)));
 
@@ -42,13 +53,14 @@ const createDataCompletenessAssertion = (globalParams, schemaName, tableName, co
 
 };
 
-module.exports = (globalParams, dataCompletenessConditions) => {
+module.exports = (globalParams, config, dataCompletenessConditions) => {
   // Loop through dataCompletenessConditions to create data completeness check assertions.
   for (let schemaName in dataCompletenessConditions) {
     const tableNames = dataCompletenessConditions[schemaName];
     for (let tableName in tableNames) {
       const columnConditions = tableNames[tableName];
-      createDataCompletenessAssertion(globalParams, schemaName, tableName, columnConditions);
+      const filter = config[tableName]?.where ?? true;
+      createDataCompletenessAssertion(globalParams, schemaName, tableName, filter, columnConditions);
     }
   }
   return assertions;

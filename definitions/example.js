@@ -11,6 +11,11 @@ const commonAssertionsResult = commonAssertions({
     // Set the 'dataform.projectConfig.vars.env' var in 'dataform.json' for this to work.
     // "disabledInEnvs": ["dv", "qa"]
   },
+  config: {
+    "first_table": {
+      "where": "updated_date >= CURRENT_DATE() - 7"
+    },
+  },
   rowConditions: {
     // Format: "schema": { "table": { "conditionName": "conditionQuery", ... }, ... }
     "dataform": {
@@ -37,11 +42,16 @@ const commonAssertionsResult = commonAssertions({
         "dateColumn": "updated_date",
         "timeUnit": "DAY",
         "delayCondition": 1,
+        "timeZone": "America/Los_Angeles"
       },
       "second_table": {
-        "dateColumn": "updated_date",
-        "timeUnit": "MONTH",
+        // If timeUnit is not DAY, WEEK, MONTH, QUARTER, or YEAR, dateColumn should be a TIMESTAMP.
+        // Check here for valid Date time units: https://cloud.google.com/bigquery/docs/reference/standard-sql/date_functions#date_diff
+        // Check here for valid Timestamp time units: https://cloud.google.com/bigquery/docs/reference/standard-sql/timestamp_functions#timestamp_diff
+        "dateColumn": "TIMESTAMP(updated_date)",
+        "timeUnit": "HOUR",
         "delayCondition": 3,
+        "timeZone": "-08"
       }
     }
   },
