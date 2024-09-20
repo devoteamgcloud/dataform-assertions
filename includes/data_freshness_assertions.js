@@ -59,7 +59,6 @@ const createDataFreshnessAssertion = (globalParams, schemaName, tableName, filte
   assertions.push(assertion);
 };
 
-
 module.exports = (globalParams, config, freshnessConditions) => {
   // Loop through freshnessConditions to create assertions.
   for (let schemaName in freshnessConditions) {
