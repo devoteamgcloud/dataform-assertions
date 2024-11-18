@@ -21,7 +21,7 @@
 const assertions = [];
 
 const createRowConditionAssertion = (globalParams, schemaName, tableName, filter, conditionName, conditionQuery) => {
-  const assertion = assert(`assert_${conditionName.replace(/-/g , "_")}${schemaName}_${tableName}`)
+  const assertion = assert(`assert_${conditionName.replace(/-/g , "_")}_${schemaName}_${tableName}`)
     .database(globalParams.database)
     .schema(globalParams.schema)
     .description(`Assert that rows in ${schemaName}.${tableName} meet ${conditionName}`)
