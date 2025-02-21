@@ -56,7 +56,7 @@ module.exports = (globalParams, config, rowConditions) => {
     for (let tableName in tableNames) {
       for (let conditionName in tableNames[tableName]) {
         const conditionQuery = tableNames[tableName][conditionName];
-        const filter = config[schemaName][tableName]?.where ?? true;
+        const filter = config[schemaName]?.[tableName]?.where ?? true;
         createRowConditionAssertion(
           globalParams,
           schemaName,

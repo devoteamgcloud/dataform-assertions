@@ -68,7 +68,7 @@ module.exports = (globalParams, config, referentialIntegrityConditions) => {
     const parentTables = referentialIntegrityConditions[parentSchema];
     for (let parentTable in parentTables) {
       const relationships = parentTables[parentTable];
-      const parentFilter = config[parentSchema][parentTable]?.where ?? true;
+      const parentFilter = config[parentSchema]?.[parentTable]?.where ?? true;
 
       relationships.forEach(({
         parentKey,
