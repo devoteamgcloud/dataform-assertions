@@ -57,7 +57,7 @@ module.exports = (globalParams, config, uniqueKeyConditions) => {
     const tableNames = uniqueKeyConditions[schemaName];
     for (let tableName in tableNames) {
       const columns = tableNames[tableName];
-      const filter = config[schemaName][tableName]?.where ?? true;
+      const filter = config[schemaName]?.[tableName]?.where ?? true;
       createUniqueKeyAssertion(globalParams, schemaName, tableName, filter, columns);
     }
   }
