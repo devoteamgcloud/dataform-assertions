@@ -59,7 +59,7 @@ module.exports = (globalParams, config, dataCompletenessConditions) => {
     const tableNames = dataCompletenessConditions[schemaName];
     for (let tableName in tableNames) {
       const columnConditions = tableNames[tableName];
-      const filter = config[schemaName][tableName]?.where ?? true;
+      const filter = config[schemaName]?.[tableName]?.where ?? true;
       createDataCompletenessAssertion(globalParams, schemaName, tableName, filter, columnConditions);
     }
   }

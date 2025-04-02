@@ -70,7 +70,7 @@ module.exports = (globalParams, config, freshnessConditions) => {
         dateColumn,
         timeZone
       } = tableNames[tableName];
-      const filter = config[schemaName][tableName]?.where ?? true;
+      const filter = config[schemaName]?.[tableName]?.where ?? true;
       createDataFreshnessAssertion(globalParams, schemaName, tableName, filter, delayCondition, timeUnit, dateColumn, timeZone);
     }
   }
